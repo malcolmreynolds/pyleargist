@@ -21,6 +21,7 @@ setup(name='pyleargist',
                   'lear_gist/standalone_image.c',
                   'lear_gist/gist.c',
               ],
+              include_dirs=['/usr/local/include'],  # Homebrew installed FFTW
               libraries=['m', 'fftw3f'],
               extra_compile_args=['-DUSE_GIST', '-DSTANDALONE_GIST'],
           ),
