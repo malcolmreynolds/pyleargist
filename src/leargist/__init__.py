@@ -56,6 +56,7 @@ def bw_gist(im, nblocks=4, orientations=(8, 8, 4)):
     gbwi = GistBwImage(
         im.shape[1],  # Width is the SECOND element of the shape tuple
         im.shape[0],
+        im.shape[1],
         im.ctypes.data_as(POINTER(c_float)))
 
     # We don't need a *3 because it's black & white
