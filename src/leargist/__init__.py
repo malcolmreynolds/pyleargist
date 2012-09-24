@@ -59,9 +59,10 @@ def bw_gist(im, nblocks=4, orientations=(8, 8, 4)):
         im.shape[1],
         im.ctypes.data_as(POINTER(c_float)))
 
-    # We don't need a *3 because it's black & white
-    descriptors = c_float * nblocks * nblocks * orientations.sum()
-
+    # We don't need a *3 because it's black & white. Note the useless
+    # looking brackets here are HIGHLY NECESSARY!! difference between
+    # ending up with c_float * 320 (which we want) and c_float * 4 * 4 * 20
+    descriptors = c_float * (nblocks * nblocks * orientations.sum())
     addr = libleargist.bw_gist_scaletab(
         pointer(gbwi), nblocks, scales,
         orientations.ctypes.data_as(POINTER(c_int)))
@@ -99,4 +100,3 @@ def color_gist(im, nblocks=4, orientations=(8, 8, 4)):
         pointer(gci), nblocks, scales,
         orientations.ctypes.data_as(POINTER(c_int)))
     return np.ctypeslib.as_array(descriptors.from_address(addr))
-
