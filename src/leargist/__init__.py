@@ -66,6 +66,11 @@ def bw_gist(im, nblocks=4, orientations=(8, 8, 4)):
     addr = libleargist.bw_gist_scaletab(
         pointer(gbwi), nblocks, scales,
         orientations.ctypes.data_as(POINTER(c_int)))
+
+    if addr == None:
+        # This can happen when the block we give it contains NaN, Inf, etc.
+        raise ValueError("Descriptor invalid")
+
     return np.ctypeslib.as_array(descriptors.from_address(addr))
 
 
@@ -99,4 +104,9 @@ def color_gist(im, nblocks=4, orientations=(8, 8, 4)):
     addr = libleargist.color_gist_scaletab(
         pointer(gci), nblocks, scales,
         orientations.ctypes.data_as(POINTER(c_int)))
+
+    if addr == None:
+        # This can happen when the block we give it contains NaN, Inf, etc.
+        raise ValueError("Descriptor invalid")
+
     return np.ctypeslib.as_array(descriptors.from_address(addr))
