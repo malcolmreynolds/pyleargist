@@ -11,6 +11,7 @@ leargist_folder = os.path.abspath(__file__).rsplit(os.path.sep, 1)[0]
 leargist_name = "_gist"
 libleargist = np.ctypeslib.load_library(leargist_name, leargist_folder)
 
+
 class GistBwImage(Structure):
     '''Matches image_t declared in standalone_image.h'''
     _fields_ = [
@@ -74,6 +75,38 @@ def bw_gist(im, nblocks=4, orientations=(8, 8, 4)):
     return np.ctypeslib.as_array(descriptors.from_address(addr))
 
 
+def color_gist_numpy(image, nblocks=4, orientations=(8, 8, 4)):
+    height, width = image.shape[:2]
+    if width < 8 or height < 8:
+        raise ValueError(
+            "image size should at least be (8, 8), got %r" % (width, height))
+
+    image = image.transpose(2, 0, 1)
+    image = np.ascontiguousarray(image, dtype=np.float32)
+
+    gci = GistColorImage(
+        width,
+        height,
+        image[0].ctypes.data_as(POINTER(c_float)),
+        image[1].ctypes.data_as(POINTER(c_float)),
+        image[2].ctypes.data_as(POINTER(c_float)))
+
+    scales = len(orientations)
+    orientations = np.array(orientations, dtype=np.int32)
+
+    addr = libleargist.color_gist_scaletab(
+        pointer(gci), nblocks, scales,
+        orientations.ctypes.data_as(POINTER(c_int)))
+
+    descriptors = c_float * (nblocks * nblocks * orientations.sum() * 3)
+
+    if addr == None:
+        # This can happen when the block we give it contains NaN, Inf, etc.
+        raise ValueError("Descriptor invalid")
+
+    return np.ctypeslib.as_array(descriptors.from_address(addr))
+
+
 def color_gist(im, nblocks=4, orientations=(8, 8, 4)):
     """Compute the GIST descriptor of an RGB image"""
     scales = len(orientations)
@@ -88,7 +121,7 @@ def color_gist(im, nblocks=4, orientations=(8, 8, 4)):
     im = im.convert(mode='RGB')
 
     # build the lear_gist color image C datastructure
-    arr = np.fromstring(im.tostring(), np.uint8)
+    arr = np.fromstring(im.tobytes(), np.uint8)
     arr.shape = list(im.size) + [3]
     arr = arr.transpose(2, 0, 1)
     arr = np.ascontiguousarray(arr, dtype=np.float32)

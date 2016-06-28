@@ -54,6 +54,17 @@ Here is a sample session in  a python shell once the library is installed::
   >>> descriptors[:4]
   array([ 0.05786307,  0.19255637,  0.09331483,  0.06622448], dtype=float32)
 
+The interface for numpy images is now available.
+
+  >>> import leargist
+  >>> from scipy.misc import imread
+
+  >>> im = imread('lear_gist/ar.ppm')
+  >>> descriptors = leargist.color_gist_numpy(im)
+
+  >>> descriptors[:4]
+  array([ 0.05786309,  0.19255623,  0.09331464,  0.06622445], dtype=float32)
+
 
 The GIST descriptors (fixed size, 960 by default) can then be used as an
 euclidian space to cluster images based on their content.

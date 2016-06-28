@@ -1,1 +1,6 @@
 build/
+
+*.o
+lear_gist/compute_gist
+
+__pycache__
