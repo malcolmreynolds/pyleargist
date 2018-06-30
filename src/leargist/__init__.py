@@ -88,7 +88,7 @@ def color_gist(im, nblocks=4, orientations=(8, 8, 4)):
     im = im.convert(mode='RGB')
 
     # build the lear_gist color image C datastructure
-    arr = np.fromstring(im.tostring(), np.uint8)
+    arr = np.fromstring(im.tobytes(), np.uint8)
     arr.shape = list(im.size) + [3]
     arr = arr.transpose(2, 0, 1)
     arr = np.ascontiguousarray(arr, dtype=np.float32)
