@@ -23,6 +23,10 @@ Install
 Install libfftw3 with development headers (http://www.fftw.org), python dev
 headers, gcc, the Python Imaging Library (PIL) and numpy.
 
+Installing FFTW::
+	Run the shell script :
+	$ ./fftw.sh
+
 Build locally for testing::
 
   % python setup.py buid_ext -i
